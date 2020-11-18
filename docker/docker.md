@@ -6,7 +6,7 @@ We provide both Dockerfile and pre-built Docker container for compiling SoftGym.
 
 - Install [docker-ce](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker#quickstart)
-- Install [Anaconda](https://www.anaconda.com/distribution/)
+- Install [Anaconda/Miniconda](https://www.anaconda.com/distribution/)
 - Install Pybind11 using `conda install pybind11`
 
 ## Running pre-built Dockerfile
@@ -44,13 +44,43 @@ nvidia-docker run \
 ```
 This solution follows [this tutorial]( https://medium.com/@benjamin.botto/opengl-and-cuda-applications-in-docker-af0eece000f1) for running GL and CUDA application inside the docker. 
 
-- Now you are in the Docker environment. Go to the softgym directory and compile PyFlex
+- Now you are in the Docker environment. Go to the softgym directory, create a conda env, set PATH and compile PyFlex
 
 ```
-export PATH="PATH_TO_CONDA:$PATH"
-. ./prepare_1.0.sh && ./compile_1.0.sh
-```
+cd softgym
+export PATH="PATH_TO_CONDA/bin:$PATH"
+export PYFLEXROOT=${PWD}/PyFlex
+export PYTHONPATH=${PYFLEXROOT}/bindings/build:$PYTHONPATH
+export LD_LIBRARY_PATH=${PYFLEXROOT}/external/SDL2-2.0.4/lib/x64:$LD_LIBRARY_PATH
 
+conda create -n softgym #you can add here packages, not needed
+conda activate softgym
+
+./compile_1.0.sh
+```
+- Now that PyFleX has properly compiled. You can move outside docker (`Ctrl+D`), export the environment variables and start playing with the examples.
+
+```
+cd repos/softgym
+
+export PATH="PATH_TO_CONDA/bin:$PATH"
+export PYFLEXROOT=${PWD}/PyFlex
+export PYTHONPATH=${PYFLEXROOT}/bindings/build:$PYTHONPATH
+export LD_LIBRARY_PATH=${PYFLEXROOT}/external/SDL2-2.0.4/lib/x64:$LD_LIBRARY_PATH
+
+conda activate softgym
+#Running an example
+
+python examples/random_env.py --env_name ClothFlatten
+
+#Probably missing a lot of packages, to install them:
+conda install -c conda-forge pkgname
+#For example
+conda install -c conda-forge numpy
+
+```
+- If running the example fails to `import softgym.*` this is probably due to `PYTHONPATH` issues and you should make sure
+the interpreter knows where to look for softgym package. More info on [PYTHONPATH]( https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
 ## Running with Dockerfile
 
