@@ -20,8 +20,8 @@ class FlexEnv(gym.Env):
                  headless=False,
                  render=True,
                  horizon=100,
-                 camera_width=720,
-                 camera_height=720,
+                 camera_width=240, #used to be 720
+                 camera_height=240,
                  num_variations=1,
                  action_repeat=8,
                  camera_name='default_camera',
