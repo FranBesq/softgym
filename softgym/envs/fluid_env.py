@@ -52,7 +52,7 @@ class FluidEnv(FlexEnv):
         if self.version == 2:
             robot_params = []
             self.params = (scene_params, robot_params)
-            pyflex.set_scene(env_idx, scene_params, 0, robot_params)
+            pyflex.set_scene(env_idx, scene_params, 0)#, robot_params)
         elif self.version == 1:
             pyflex.set_scene(env_idx, scene_params, 0)
         
